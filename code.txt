@@ -1,0 +1,10 @@
+%%bash
+
+head yelp_academic_dataset_business.json
+
+import ijson
+
+filename = "md_traffic.json"
+with open(filename, 'r') as f:
+    objects = ijson.items(f)
+    columns = list(objects)
