@@ -1,6 +1,14 @@
 <!DOCTYPE html>
+
+<head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
 <meta charset="utf-8">
     <body>
+        </head>
+        <div class="container">
+            <button class="SquirrelHillButton" rel="6">Squirrel Hill, Pittsburgh, PA</button>
+        </div>
         <script src="http://d3js.org/d3.v3.min.js"></script>
         <script src="https://rawgit.com/jasondavies/d3-cloud/master/build/d3.layout.cloud.js"></script>
         <script>
@@ -112,14 +120,64 @@
         
         d3.json('yelp_data.json', function(error, data){
                 var demo = d3.select('div');
-                alert("Hello");
-                messages = demo.selectAll('messages').data(data).enter();
+                
+                //alert("Hello");
+                //messages = demo.selectAll('messages').data(data).enter();
                 //demo.append('h1').html(');//d.Allentown;});
-                messages.append('p').html(function(d){return d.Allentown.year;});
+                //messages.append('p').html(function(d){return d.Allentown.year;});
                                        
         });
-        //Start cycling through the demo data
-        showNewWords(myWordCloud);
+        function getFrequency(string) {
+            var freq = {};
+            var wordArray = string.replace(/[!\.,:;\?]/g, '').split(' ');
+                                           //console.log(wordArray[0,20]);
+            for (var i=0; i<wordArray.length;i++) {
+                if (freq[wordArray[i]]) {
+                    freq[wordArray[i]]++;
+                } else {
+                    freq[wordArray[i]] = 1;
+                }
+            }
+            console.log(freq);
+            return freq;
+        };
+                                           //delete this function
+        function wordFrequency(txt){
+            var wordArray = txt.split(/[ .?!,*'"]/);
+                                        var newArray = [], wordObj;
+                                        wordArray.forEach(function (word) {
+                                                          wordObj = newArray.filter(function (w){
+                                                                                    return w.text == word;
+                                                                                    });
+                                                          if (wordObj.length) {
+                                                          wordObj[0].size += 1;
+                                                          } else {
+                                                          newArray.push({text: word, size: 1});
+                                                          }
+                                                          });
+                                        //s = JSON.stringify(wordFrequency(txt).sort(function(a,b){return a.size<b.size})).split("},").join("}<br/>");
+                                        //console.log(s[0]);
+                                        return newArray;
+                                        }
+                                        //document.write(JSON.stringify(wordFrequency("count everything, count all the words, count all the words!").sort(function(a,b){return a.size<b.size})).split("},").join("}<br/>"));
+        
+        $(".SquirrelHillButton").click(function(){
+                          //alert("but");
+                          $.ajax({url: "yelp_data.json", success: function(data){
+                                 words = data['Squirrel Hill'].text
+                                 getFrequency(words);
+                                 //console.log(words);
+                                 wordCloud('body').update(words.replace(/[!\.,:;\?]/g, '')
+                                                          .split(' ')
+                                                          .map(function(d) {
+                                                               
+                                                               return wordFrequency(d);//{text: d, size: wordFrequency(d)};
+                                                               }));
+
+                                                                  }});
+                                       });
+        
+      
         
         
             </script>
